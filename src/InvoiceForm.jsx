@@ -83,7 +83,10 @@ function InvoiceForm() {
       },
       body: JSON.stringify({
         accountname,
-        description,
+        amount,
+        quantity,
+
+        // description,
         product,
         vendor,
         purchaseorder,
