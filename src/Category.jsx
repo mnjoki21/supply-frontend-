@@ -64,18 +64,62 @@ export default function Category() {
     setCategory(updatedEvents);
   }
 
+  const [isAdding, setIsAdding] = useState(false);
+  const [items, setItems] = useState([]);
+  // useEffect(() => {
+  //   fetch("http://localhost:3000/categories")
+  //     .then((r) => r.json())
+  //     .then((items) => {
+  //       setItems(items);
+  //     });
+  // }, []);
+
+  function getItems(newItemsReceived) {
+    const updateItems = [...items, newItemsReceived];
+    setItems(updateItems);
+  }
+
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <CategoriesForm />
+    <Container
+      maxWidth="lg"
+      sx={{
+        mt: 4,
+        mb: 4,
+        ml: 15
+      }}
+    >
+      <Typography variant="h4" sx={{ ml: 50 }} gutterBottom>
+        Categories
+      </Typography>
       <Grid container spacing={3}>
         {/* Chart */}
         <Grid item xs={12} md={8} lg={9}>
-          <Table sx={{ minWidth: 1000, ml: 10 }} aria-label="customized table">
+          <Button
+            variant="contained"
+            type="submit"
+            sx={{
+              mb: 4,
+              ml: 6,
+            }}
+            onClick={() => setIsAdding((isAdding) => !isAdding)}
+          >
+            Add Category
+          </Button>
+
+          {isAdding ? <CategoriesForm getItems={getItems} /> : null}
+
+          <Table
+            sx={{
+              minWidth: 1000,
+              ml: 10,
+            }}
+            aria-label="customized table"
+          >
             <TableHead>
               <TableRow>
                 <StyledTableCell>CATEGORY</StyledTableCell>
-                <StyledTableCell align="right">Delete</StyledTableCell>
-                <StyledTableCell align="right">Edit</StyledTableCell>
+                <StyledTableCell align="right">Action</StyledTableCell>
+                {/* <StyledTableCell align="right">Edit</StyledTableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -84,19 +128,18 @@ export default function Category() {
                   <StyledTableCell component="th" scope="row">
                     {row.name}
                   </StyledTableCell>
+
                   <StyledTableCell align="right">
+                    <Button variant="contained">Edit</Button>
                     <Button
                       onClick={() => handleDelete(row.id)}
                       variant="contained"
-                      color="error"
-                      startIcon={<DeleteIcon />}
+                      sx={{
+                        backgroundColor: "red",
+                        ml: 2,
+                      }}
                     >
                       Delete
-                    </Button>
-                  </StyledTableCell>
-                  <StyledTableCell align="right">
-                    <Button variant="outlined" startIcon={<EditIcon />}>
-                      Edit
                     </Button>
                   </StyledTableCell>
                 </StyledTableRow>

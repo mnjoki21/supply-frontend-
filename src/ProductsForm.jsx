@@ -87,7 +87,7 @@ function ProductsForm() {
 
   return (
     <Fragment>
-      <Grid container spacing={10}>
+      <Grid container spacing={3}>
         {/* Chart */}
         <Grid
           item

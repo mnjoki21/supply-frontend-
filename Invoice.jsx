@@ -1,6 +1,5 @@
 import { Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import ProductsForm from "./ProductsForm";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
@@ -12,12 +11,10 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import { useEffect, useState } from "react";
-
+import { Button } from "@mui/material";
+import { useState, useEffect } from "react";
+import PurchaseItemForm from "./PurchaseItemForm";
+import InvoiceForm from "./src/InvoiceForm";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -25,7 +22,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     color: theme.palette.common.white,
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 30,
+    fontSize: 14,
   },
 }));
 
@@ -39,46 +36,21 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function Product() {
-  const [product, setProduct] = React.useState([]);
-
+export default function PurchaseItem() {
+  const [isAdding, setIsAdding] = useState(false);
+  const [items, setItems] = useState([]);
   useEffect(() => {
-    fetch("http://localhost:3000/products")
+    fetch("http://localhost:3000/invoice")
       .then((r) => r.json())
-      .then((data) => setProduct(data));
+      .then((items) => {
+        setItems(items);
+      });
   }, []);
 
-  function handleDelete(id) {
-    fetch(`http://localhost:3000/products/${id}`, {
-      method: "DELETE",
-    })
-      .then((r) => r.json())
-      .then(() => {
-        // deleteEvent(id)
-        const deletion = product.filter((item) => item.id !== id);
-        setProduct(deletion);
-      });
+  function getItems(newItemsReceived) {
+    const updateItems = [...items, newItemsReceived];
+    setItems(updateItems);
   }
-
-   const [isAdding, setIsAdding] = useState(false);
-   const [items, setItems] = useState([]);
-   useEffect(() => {
-     fetch("http://localhost:3000/categories")
-       .then((r) => r.json())
-       .then((items) => {
-         setItems(items);
-       });
-   }, []);
-
-   function getItems(newItemsReceived) {
-     const updateItems = [...items, newItemsReceived];
-     setItems(updateItems);
-   }
-
-  // function deleteEvent(id) {
-  //   const updatedEvents = category.filter((one) => one.id !== id);
-  //   setCategory(updatedEvents);
-  // }
 
   return (
     <Container
@@ -89,7 +61,7 @@ export default function Product() {
       }}
     >
       <Typography variant="h4" sx={{ ml: 50 }} gutterBottom>
-        Products
+        Purchase Items
       </Typography>
       <Grid container spacing={3}>
         {/* Chart */}
@@ -103,10 +75,10 @@ export default function Product() {
             }}
             onClick={() => setIsAdding((isAdding) => !isAdding)}
           >
-            Add Product
+            Add PurchaseItem
           </Button>
 
-          {isAdding ? <ProductsForm getItems={getItems} /> : null}
+          {isAdding ? <InvoiceForm getItems={getItems} /> : null}
 
           <Table
             sx={{
@@ -117,22 +89,32 @@ export default function Product() {
           >
             <TableHead>
               <TableRow>
-                <StyledTableCell>CATEGORY</StyledTableCell>
-                <StyledTableCell align="right">Action</StyledTableCell>
-                {/* <StyledTableCell align="right">Edit</StyledTableCell> */}
+                <StyledTableCell>Invoice</StyledTableCell>
+                <StyledTableCell align="right">Amount</StyledTableCell>
+                <StyledTableCell align="right">Quantity</StyledTableCell>
+                <StyledTableCell align="right">Purchase Order</StyledTableCell>
+                <StyledTableCell align="right">Products</StyledTableCell>
+                <StyledTableCell align="right">Vendor</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {product.map((row) => (
-                <StyledTableRow key={row.id}>
+              {items.map((item) => (
+                <StyledTableRow key={item.id}>
                   <StyledTableCell component="th" scope="row">
-                    {row.name}
+                    {item.product.name}
                   </StyledTableCell>
-
+                  <StyledTableCell align="right">
+                    {item.vendor.name}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    {item.invoice_id}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    {item.quantity}
+                  </StyledTableCell>
                   <StyledTableCell align="right">
                     <Button variant="contained">Edit</Button>
                     <Button
-                      onClick={() => handleDelete(row.id)}
                       variant="contained"
                       sx={{
                         backgroundColor: "red",

@@ -74,103 +74,80 @@ function VendorsForm({ getItems }) {
   }
 
   return (
-    <Grid container direction="row" alignItems="center" justifyContent="center">
-      <Box>
-        <Card sx={{ minWidth: 400 }}>
-          <main>
-            <form>
-              <p
-                style={{
-                  fontWeight: "bolder",
-                  fontSize: 40,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  textAlign: "center",
-                }}
-              >
-                Add Vendor
-              </p>
+    <Fragment>
+      <Grid container spacing={10}>
+        {/* Chart */}
+        <Grid
+          item
+          xs={12}
+          md={8}
+          lg={9}
+          sx={{
+            ml: 50,
+          }}
+        >
+          <Paper
+            sx={{
+              p: 2,
+              display: "flex",
+              flexDirection: "column",
+              height: 450,
+            }}
+          >
+            <Typography variant="h4" gutterBottom>
+              Create Vendor
+            </Typography>
+            <TextField
+              id="outlined-basic"
+              label="Name"
+              variant="outlined"
+              name="name"
+              value={items.name}
+              onChange={onDataChange}
+              sx={{ width: 500, m: 1 }}
+            />
 
-              <Box sx={{ "& .MuiTextField-root": { m: 1, width: "35ch" } }}>
-                <div>
-                  <TextField
-                    id="outlined-basic"
-                    label="Name"
-                    variant="outlined"
-                    name="name"
-                    value={items.name}
-                    onChange={onDataChange}
-                    sx={{ width: 500, m: 1 }}
-                  />
+            <TextField
+              id="outlined-basic"
+              label="Address"
+              variant="outlined"
+              name="address"
+              value={items.address}
+              onChange={onDataChange}
+              sx={{ width: 500, m: 1 }}
+            />
+            <TextField
+              id="outlined-basic"
+              label="Email"
+              variant="outlined"
+              name="email"
+              value={items.email}
+              onChange={onDataChange}
+              sx={{ width: 500, m: 1 }}
+            />
 
-                  <br />
-                  <TextField
-                    id="outlined-basic"
-                    label="Address"
-                    variant="outlined"
-                    name="address"
-                    value={items.address}
-                    onChange={onDataChange}
-                    sx={{ width: 500, m: 1 }}
-                  />
-
-                  <br />
-                  <TextField
-                    id="outlined-basic"
-                    label="Email"
-                    variant="outlined"
-                    name="email"
-                    value={items.email}
-                    onChange={onDataChange}
-                    sx={{ width: 500, m: 1 }}
-                  />
-
-                  <br />
-                  <TextField
-                    type="number"
-                    id="outlined-basic"
-                    label="Phone-number"
-                    variant="outlined"
-                    name="phone_number"
-                    value={items.phone_number}
-                    onChange={onDataChange}
-                    sx={{ width: 500, m: 1 }}
-                  />
-
-                  <br />
-                </div>
-              </Box>
-
-              <br />
-              <br />
-              <div>
-                <Box textAlign="center">
-                  <Button
-                    variant="contained"
-                    onClick={handleSubmit}
-                    type="submit"
-                    style={{ fontSize: 16 }}
-                  >
-                    Submit
-                  </Button>
-                </Box>
-                <br />
-
-                <div>
-                  {errors.map((err) => (
-                    <>
-                      <Alert key={err} severity="error" sx={{ width: "100%" }}>
-                        {err}
-                      </Alert>
-                    </>
-                  ))}
-                </div>
-              </div>
-            </form>
-          </main>
-        </Card>
-      </Box>
-    </Grid>
+            <TextField
+              id="outlined-basic"
+              label="Phone-Number"
+              variant="outlined"
+              name="phone_number"
+              value={items.phone_number}
+              onChange={onDataChange}
+              sx={{ width: 500, m: 1 }}
+            />
+            <Button
+              variant="contained"
+              type="submit"
+              sx={{ mt: 2 }}
+              onClick={ handleSubmit }
+              
+            >
+              Submit
+            </Button>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Fragment>
   );
 }
 export default VendorsForm;
