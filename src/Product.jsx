@@ -60,36 +60,15 @@ export default function Product() {
     setItems
   }
 
-  // useEffect(() => {
-  //   fetch("http://localhost:3000/categories")
-  //     .then((r) => r.json())
-  //     .then((items) => {
-  //       setItems(items);
-  //     });
-  // }, []);
-  // function handleUpdate(id) {
-  //   fetch(`http://localhost:3000/products/${id}`, {
-  //     // mode: 'no-cors',
-  //     method: 'PATCH',
-  //   })
-  //     .then((r) => r.json())
-  //     .then(() => {
-  //       const update = product.filter((item) => item.id !== id)
-  //       setProduct(update)
-  //   })
-  // }
 
   function handleDelete(id) {
     fetch(`http://localhost:3000/products/${id}`, {
       method: "DELETE",
     })
-
-    // .then(() =>setProduct('deleted successfully') )
       .then((r) => r.json())
       .then(() => {
-        // deleteEvent(id)
-        const deletion = product.filter((item) => item.id !== id);
-        setProduct(deletion);
+        const deletion = items.filter((item) => item.id !== id);
+        setItems(deletion);
       });
   }
 
@@ -99,10 +78,7 @@ export default function Product() {
      setItems(updateItems);
    }
 
-  function deleteEvent(id) {
-    const updatedEvents = category.filter((one) => one.id !== id);
-    setProduct(updatedEvents);
-  }
+
 
   return (
     <Container
