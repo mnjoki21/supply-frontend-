@@ -20,6 +20,8 @@ import Paper from "@mui/material/Paper";
 import OutlinedInput from "@mui/material/OutlinedInput";
 
 
+
+
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -33,61 +35,151 @@ const MenuProps = {
 
 
 
-function ProductsForm() {
-  const [category_id, setCategory] = React.useState("");
-  const [products, setProducts] = useState([]);
-  const [description, setDescription] = useState("");
-  const [name, setName] = useState("");
-  const [errors, setErrors] = useState([]);
-
-  const [categories, setCategories] = useState([]);
-
-  const handleChange = (event) => {
-    setCategory(event.target.value);
-  };
-
-  // fetches categories
+function ProductsForm({getItems}) {
+  
+//fetch categories
+  const [ category, setCategory ] = useState([]);
   useEffect(() => {
-    fetch("http://localhost:3000/categories")
+    fetch('http://localhost:3000/categories')
       .then((r) => r.json())
-      .then((data) => setCategories(data));
-  }, []);
-  const dot = { name, description, category_id };
+      .then((category) => {
+      setCategory(category)
+    })
+  }, [])
+  
+  const [ items, setItems ] = useState({
+    category_id: '',
+    // products: '',
+    description: '',
+    name:''
+  })
 
-  console.log(dot);
+  function onDataChange(e) {
+    setItems({
+      ...items,
+      [e.target.name]: e.target.value
+    })
+  }
 
-  // function handleOnSubmit(e){
-  //   e.preventDefault();
-  //   fetch("http://localhost:3000/categories",{
-  //       method: "POST",
-  //       headers: {
-  //           "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({name}),
+  function handleSubmit(e) {
+    e.preventDefault();
+    const createdItems = {
+      category_id: items.category_id,
+      description: items.description,
+      name: items.name
+    }
+
+    fetch("http://localhost:3000/products", {
+      method: 'POST',
+      headers: {
+        'Content-Type' : 'application/json'
+      },
+      body: JSON.stringify(createdItems)
+    })
+      .then((res) => res.json())
+      .then((newItem) => {
+        getItems(newItem)
+        setItems({
+          ...items,
+          category_id: '',
+          description: '',
+          name: ""
+        })
+    })
+  }
+  // const [category_id, setCategory] = React.useState("");
+  // const [products, setProducts] = useState([]);
+  // const [description, setDescription] = useState("");
+  // const [name, setName] = useState("");
+  // const [errors, setErrors] = useState([]);
+
+  // const [categories, setCategories] = useState([]);
+
+  // const [ items, setItems ] = useState({
+  //   category: "",
+  //   description: '',
+  //   name: ''    
+  // })
+  // function onDataChange(e) {
+  //   setItems({
+  //     ...items,
+  //     [e.target.name] : e.target.value,
   //   })
-  //   .then((r) => r.json())
-  //   .then(response => setCategory(response));
+  // }
+
+  // function handleSubmit(e) {
+  //   e.preventDefault();
+  //   const createdItems = {
+  //     category: items.category,
+  //     description: items.description,
+  //     name: items.name
+
+  //   }
+
+  //   fetch('http://localhost:3000/products', {
+  //     method: 'POST',
+  //     headers: {
+  //       "Content-Type": 'application/json'
+  //     },
+  //     body: JSON.stringify(createdItems)
+  //   })
+  //     .then((res) => res.json())
+  //     .then((newItem) => {
+  //       setItems({
+  //         ...items,
+  //         category: '',
+  //         description: "",
+  //         name: ""
+  //       })
+  //     })
+  // }
+
+  // const handleChange = (event) => {
+  //   setCategory(event.target.value);
+  // };
+
+  // // fetches categories
+  // useEffect(() => {
+  //   fetch("http://localhost:3000/categories")
+  //     .then((r) => r.json())
+  //     .then((data) => setCategories(data));
+  // }, []);
+  // const dot = { name, description, category_id };
+
+  // console.log(dot);
+
+  // // function handleOnSubmit(e){
+  // //   e.preventDefault();
+  // //   fetch("http://localhost:3000/categories",{
+  // //       method: "POST",
+  // //       headers: {
+  // //           "Content-Type": "application/json",
+  // //       },
+  // //       body: JSON.stringify({name}),
+  // //   })
+  // //   .then((r) => r.json())
+  // //   .then(response => setCategory(response));
+  // //   // .then((response) => console.log(response));
+  // // }
+
+  // function handleOnSubmit(e) {
+  //   e.preventDefault();
+
+  //   fetch("http://localhost:3000/products", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(dot),
+  //   })
+  //     .then((r) => r.json())
+  //     .then((response) => setProducts(response));
   //   // .then((response) => console.log(response));
   // }
 
-  function handleOnSubmit(e) {
-    e.preventDefault();
-
-    fetch("http://localhost:3000/products", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dot),
-    })
-      .then((r) => r.json())
-      .then((response) => setProducts(response));
-    // .then((response) => console.log(response));
-  }
-
   return (
     <Fragment>
-      <Grid container spacing={3}>
+      <Grid container spacing={10}>
         {/* Chart */}
         <Grid
           item
@@ -113,20 +205,22 @@ function ProductsForm() {
               id="name"
               label="Enter Product name"
               variant="outlined"
-              // name="quantity"
-              value={name}
-              sx={{ width: 500, m: 1 }}
-              onChange={(e) => setName(e.target.value)}
+              name="name"
+              value={items.name}
+              onChange={onDataChange}
+              sx={ { width: 500, m: 1 } }
+              // onChange={(e) => setName(e.target.value)}
             />
 
             <TextField
               id="description"
               label="Enter Description name"
               variant="outlined"
-              // name="quantity"
-              value={description}
-              sx={{ width: 500, m: 1 }}
-              onChange={(e) => setDescription(e.target.value)}
+              name="description"
+              value={items.description}
+              sx={ { width: 500, m: 1 } }
+              onChange={onDataChange}
+              // onChange={(e) => setDescription(e.target.value)}
             />
 
             <FormControl
@@ -138,10 +232,10 @@ function ProductsForm() {
               <InputLabel>Category</InputLabel>
               <Select
                 input={<OutlinedInput label="Category" />}
-                name="category"
-                onChange={handleChange}
+                name="category_id"
+                onChange={onDataChange}
               >
-                {categories.map((item) => (
+                {category.map((item) => (
                   <MenuItem key={item.id} value={item.id}>
                     {item.name}
                   </MenuItem>
@@ -153,7 +247,7 @@ function ProductsForm() {
               variant="contained"
               type="submit"
               sx={{ mt: 2 }}
-              onClick={handleOnSubmit}
+              onClick={handleSubmit}
             >
               Submit
             </Button>

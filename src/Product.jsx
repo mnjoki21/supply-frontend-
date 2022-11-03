@@ -17,6 +17,9 @@ import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useEffect, useState } from "react";
+import Popover from "@mui/material/Popover";
+import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
+
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -41,17 +44,47 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function Product() {
   const [product, setProduct] = React.useState([]);
-
+  
+  const [isAdding, setIsAdding] = useState(false);
+  const [items, setItems] = useState([]);
   useEffect(() => {
     fetch("http://localhost:3000/products")
       .then((r) => r.json())
-      .then((data) => setProduct(data));
+      .then((items) => {
+      setItems(items)
+    })
   }, []);
+
+  function getItems(newItemsReceived) {
+    const updateItems = [ ...items, newItemsReceived ]
+    setItems
+  }
+
+  // useEffect(() => {
+  //   fetch("http://localhost:3000/categories")
+  //     .then((r) => r.json())
+  //     .then((items) => {
+  //       setItems(items);
+  //     });
+  // }, []);
+  // function handleUpdate(id) {
+  //   fetch(`http://localhost:3000/products/${id}`, {
+  //     // mode: 'no-cors',
+  //     method: 'PATCH',
+  //   })
+  //     .then((r) => r.json())
+  //     .then(() => {
+  //       const update = product.filter((item) => item.id !== id)
+  //       setProduct(update)
+  //   })
+  // }
 
   function handleDelete(id) {
     fetch(`http://localhost:3000/products/${id}`, {
       method: "DELETE",
     })
+
+    // .then(() =>setProduct('deleted successfully') )
       .then((r) => r.json())
       .then(() => {
         // deleteEvent(id)
@@ -60,25 +93,16 @@ export default function Product() {
       });
   }
 
-   const [isAdding, setIsAdding] = useState(false);
-   const [items, setItems] = useState([]);
-   useEffect(() => {
-     fetch("http://localhost:3000/categories")
-       .then((r) => r.json())
-       .then((items) => {
-         setItems(items);
-       });
-   }, []);
 
    function getItems(newItemsReceived) {
      const updateItems = [...items, newItemsReceived];
      setItems(updateItems);
    }
 
-  // function deleteEvent(id) {
-  //   const updatedEvents = category.filter((one) => one.id !== id);
-  //   setCategory(updatedEvents);
-  // }
+  function deleteEvent(id) {
+    const updatedEvents = category.filter((one) => one.id !== id);
+    setProduct(updatedEvents);
+  }
 
   return (
     <Container
@@ -94,18 +118,38 @@ export default function Product() {
       <Grid container spacing={3}>
         {/* Chart */}
         <Grid item xs={12} md={8} lg={9}>
-          <Button
-            variant="contained"
-            type="submit"
-            sx={{
-              mb: 4,
-              ml: 6,
-            }}
-            onClick={() => setIsAdding((isAdding) => !isAdding)}
-          >
-            Add Product
-          </Button>
-
+          <PopupState variant="popover" popupId="demo-popup-popover">
+            {(popupState) => (
+              <div>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  sx={{
+                    mb: 4,
+                    ml: 6,
+                  }}
+                  onClick={() => setIsAdding((isAdding) => !isAdding)}
+                >
+                  Add Product
+                </Button>
+                <Popover
+                  {...bindPopover(popupState)}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                >
+                  <Typography sx={{ p: 2 }}>
+                    The content of the Popover.
+                  </Typography>
+                </Popover>
+              </div>
+            )}
+          </PopupState>
           {isAdding ? <ProductsForm getItems={getItems} /> : null}
 
           <Table
@@ -117,22 +161,27 @@ export default function Product() {
           >
             <TableHead>
               <TableRow>
-                <StyledTableCell>CATEGORY</StyledTableCell>
+                <StyledTableCell>PRODUCT</StyledTableCell>
                 <StyledTableCell align="right">Action</StyledTableCell>
                 {/* <StyledTableCell align="right">Edit</StyledTableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
-              {product.map((row) => (
-                <StyledTableRow key={row.id}>
+              {items.map((item) => (
+                <StyledTableRow key={item.id}>
                   <StyledTableCell component="th" scope="row">
-                    {row.name}
+                    {item.name}
                   </StyledTableCell>
 
                   <StyledTableCell align="right">
-                    <Button variant="contained">Edit</Button>
                     <Button
-                      onClick={() => handleDelete(row.id)}
+                      variant="contained"
+                      onClick={() => handleUpdate(item.id)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={() => handleDelete(item.id)}
                       variant="contained"
                       sx={{
                         backgroundColor: "red",
